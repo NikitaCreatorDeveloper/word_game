@@ -5,7 +5,8 @@ class SoundManager:
     def __init__(self):
         self.sounds = {
             "click": SoundLoader.load("assets/sounds/click.wav"),
-            # можешь добавить ещё: "correct", "wrong", "win", "lose"
+            "win": SoundLoader.load("assets/sounds/win.wav"),
+            "lose": SoundLoader.load("assets/sounds/lose.wav"),
         }
 
     def play(self, name):

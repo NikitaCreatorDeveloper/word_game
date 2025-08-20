@@ -1,1 +1,20 @@
-{}
+{
+    "Parril": {
+        "score": 1,
+        "won": 0,
+        "lost": 1,
+        "used_words": [
+            "marlin"
+        ]
+    },
+    "Petrik": {
+        "score": 20,
+        "won": 1,
+        "lost": 2,
+        "used_words": [
+            "marlin",
+            "friends",
+            "hobbit"
+        ]
+    }
+}

@@ -118,6 +118,10 @@ class GameScreen(BaseScreen):
                 self.player.add_win()
                 self.manager.players_data[self.player.name] = self.player
                 save_players(self.manager.players_data)
+
+                Clock.schedule_once(
+                    lambda dt: self.manager.sound_manager.play("win"), 0
+                )
             self.info_label.text = "Победа! Ты отгадал слово! (+10 очков.)"
 
             if self.player:
@@ -136,6 +140,10 @@ class GameScreen(BaseScreen):
                 self.player.add_loss()
                 self.manager.players_data[self.player.name] = self.player
                 save_players(self.manager.players_data)
+
+                Clock.schedule_once(
+                    lambda dt: self.manager.sound_manager.play("lose"), 0
+                )
 
             self.info_label.text = f"Ты проиграл. Слово было: {self.word}"
             self.submit_btn.text = "В меню"
