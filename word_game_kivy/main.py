@@ -1,6 +1,9 @@
+from pathlib import Path
+
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.graphics import Rectangle
+from kivy.resources import resource_add_path
 from kivy.uix.screenmanager import FadeTransition, ScreenManager
 from screens.category_screen import CategoryScreen
 from screens.game_screen import GameScreen
@@ -10,6 +13,8 @@ from screens.name_screen import NameScreen
 from sound_manager import SoundManager
 
 from .logging_config import setup_logging
+
+resource_add_path(str(Path(__file__).resolve().parent))
 
 setup_logging()
 with Window.canvas.before:
