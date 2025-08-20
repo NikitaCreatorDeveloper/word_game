@@ -4,13 +4,15 @@ from kivy.app import App
 from kivy.core.window import Window
 from kivy.graphics import Rectangle
 from kivy.resources import resource_add_path
-from kivy.uix.screenmanager import FadeTransition, ScreenManager
+from kivy.uix.screenmanager import FadeTransition
 from screens.category_screen import CategoryScreen
 from screens.game_screen import GameScreen
 from screens.leaderboard_screen import LeaderboardScreen
 from screens.menu_screen import MainMenuScreen
 from screens.name_screen import NameScreen
 from sound_manager import SoundManager
+
+from word_game_kivy.app_types import AppScreenManager
 
 from .logging_config import setup_logging
 
@@ -35,7 +37,10 @@ Window.bind(size=update_bg)
 class WordGameApp(App):
     def build(self):
         self.sound_manager = SoundManager()  # ✅ сначала создаём
-        sm = ScreenManager(transition=FadeTransition(duration=0.4))
+        sm = AppScreenManager(transition=FadeTransition())
+
+        self.sound_manager = SoundManager()
+        sm.sound_manager = self.sound_manager
 
         game_screen = GameScreen(name="game")
         game_screen.sound_manager = self.sound_manager
