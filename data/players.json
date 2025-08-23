@@ -16,5 +16,13 @@
             "friends",
             "hobbit"
         ]
+    },
+    "Petta": {
+        "score": 17,
+        "won": 1,
+        "lost": 0,
+        "used_words": [
+            "friends"
+        ]
     }
 }
