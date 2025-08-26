@@ -1,56 +1,30 @@
-from functools import partial
-
 from kivy.uix.boxlayout import BoxLayout
-from screens.base_screen import BaseScreen
+from kivy.uix.button import Button
+from kivy.uix.label import Label
+from kivy.uix.screenmanager import Screen
+from ..i18n import t
+from ..sound_manager import SOUNDS
+from ..game.logic import WORDSETS
 
 
-class CategoryScreen(BaseScreen):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+class CategoryScreen(Screen):
+    def on_pre_enter(self):
+        self.clear_widgets()
+        root = BoxLayout(orientation="vertical", padding=16, spacing=12)
+        root.add_widget(
+            Label(
+                text=t("choose_category"), font_size="20sp", size_hint_y=None, height=48
+            )
+        )
+        for cat in WORDSETS.keys():
+            display = cat.replace("_", " ").title()
+            btn = Button(text=display, size_hint_y=None, height=48)
+            btn.bind(on_release=lambda *_b, c=cat: self.select_category(c))
+            root.add_widget(btn)
+        self.add_widget(root)
 
-        self.books = ["marlin", "friends", "harry", "hobbit"]
-        self.movies = ["matrix", "inception", "avatar", "tenet"]
-        self.holy = ["grace", "prayer", "faith", "repentance"]
-
-        layout = BoxLayout(orientation="vertical", padding=40, spacing=20)
-
-        label = self.create_styled_label("Выберите категорию")
-
-        btn_books = self.create_styled_button("Книги")
-        btn_movies = self.create_styled_button("Фильмы")
-        btn_holy = self.create_styled_button("Вера")
-        btn_back = self.create_styled_button("Назад")
-
-        btn_books.bind(on_press=lambda x: self.start_game(self.books))  # type: ignore
-        btn_movies.bind(on_press=lambda x: self.start_game(self.movies))  # type: ignore
-        btn_holy.bind(on_press=lambda x: self.start_game(self.holy))  # type: ignore
-        btn_back.bind(on_press=partial(self.switch_screen, "menu"))  # type: ignore
-
-        layout.add_widget(self.wrap_centered(label))
-        layout.add_widget(self.wrap_centered(btn_books))
-        layout.add_widget(self.wrap_centered(btn_movies))
-        layout.add_widget(self.wrap_centered(btn_holy))
-        layout.add_widget(self.wrap_centered(btn_back))
-
-        self.add_widget(layout)
-
-    def switch_screen(self, screen_name, *args):
-        self.manager.current = screen_name
-
-    def start_game(self, word_list):
-        import random
-
-        player = self.manager.current_player
-
-        # Исключаем использованные слова
-        available_words = [w for w in word_list if w not in player.used_words]
-        if not available_words:
-            player.used_words.clear()
-            available_words = word_list[:]
-
-        word = random.choice(available_words)
-        player.remember_word(word)
-
-        game_screen = self.manager.get_screen("game")
-        game_screen.start_game(word, player)
+    def select_category(self, category: str):
+        SOUNDS.play("click")
+        game = self.manager.get_screen("game")
+        game.set_category(category)
         self.manager.current = "game"

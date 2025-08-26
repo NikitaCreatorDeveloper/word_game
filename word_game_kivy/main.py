@@ -1,59 +1,27 @@
-from pathlib import Path
+# ruff: noqa: E402
+from kivy.config import Config
+
+Config.set("input", "mouse", "mouse,disable_multitouch")
 
 from kivy.app import App
-from kivy.core.window import Window
-from kivy.graphics import Rectangle
-from kivy.resources import resource_add_path
-from kivy.uix.screenmanager import FadeTransition
-from screens.category_screen import CategoryScreen
-from screens.game_screen import GameScreen
-from screens.leaderboard_screen import LeaderboardScreen
-from screens.menu_screen import MainMenuScreen
-from screens.name_screen import NameScreen
-from sound_manager import SoundManager
+from kivy.uix.screenmanager import ScreenManager, NoTransition
 
-from word_game_kivy.app_types import AppScreenManager
-
-from .logging_config import setup_logging
-
-resource_add_path(str(Path(__file__).resolve().parent))
-
-setup_logging()
-with Window.canvas.before:
-    Window.bg_rect = Rectangle(
-        source="assets/background.jpg",
-        pos=(0, 0),  # 👈 фиксированная позиция
-        size=Window.size,
-    )
-
-
-def update_bg(*args):
-    Window.bg_rect.size = Window.size  # 👈 только размер меняется
-
-
-Window.bind(size=update_bg)
+from .screens.menu_screen import MenuScreen
+from .screens.category_screen import CategoryScreen
+from .screens.game_screen import GameScreen
+from .screens.leaderboard_screen import LeaderboardScreen
 
 
 class WordGameApp(App):
+    title = "Word Game (Kivy)"
+
     def build(self):
-        self.sound_manager = SoundManager()  # ✅ сначала создаём
-        sm = AppScreenManager(transition=FadeTransition())
-
-        self.sound_manager = SoundManager()
-        sm.sound_manager = self.sound_manager
-
-        game_screen = GameScreen(name="game")
-        game_screen.sound_manager = self.sound_manager
-
-        name_screen = NameScreen(name="name")
-        name_screen.sound_manager = self.sound_manager
-
-        sm.add_widget(name_screen)
-        sm.add_widget(MainMenuScreen(name="menu"))
+        sm = ScreenManager(transition=NoTransition())
+        sm.add_widget(MenuScreen(name="menu"))
         sm.add_widget(CategoryScreen(name="category"))
-        sm.add_widget(game_screen)
+        sm.add_widget(GameScreen(name="game"))
         sm.add_widget(LeaderboardScreen(name="leaderboard"))
-
+        sm.current = "menu"
         return sm
 
 

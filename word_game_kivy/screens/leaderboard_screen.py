@@ -1,46 +1,88 @@
 from kivy.uix.boxlayout import BoxLayout
-from screens.base_screen import BaseScreen
-from utils.storage import save_players
+from kivy.uix.label import Label
+from kivy.uix.button import Button
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.screenmanager import Screen
+
+from ..utils.storage import DATA_DIR, load_json, save_json
+from ..sound_manager import SOUNDS
+
+PLAYERS_PATH = DATA_DIR / "players.json"
 
 
-class LeaderboardScreen(BaseScreen):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+def load_players_sorted() -> list[dict]:
+    data = load_json(PLAYERS_PATH, {})
+    players = list(data.values())
+    # Сортируем: score ↓, wins ↓, name ↑
+    players.sort(
+        key=lambda p: (-p.get("score", 0), -p.get("wins", 0), p.get("name", ""))
+    )
+    return players
 
-        self.layout = BoxLayout(orientation="vertical", padding=40, spacing=20)
-        self.title_label = self.create_styled_label("Таблица лидеров")
-        self.records_label = self.create_styled_label("")
-        self.clear_btn = self.create_styled_button("Очистить таблицу")
-        self.back_btn = self.create_styled_button("Назад")
-        self.back_btn.bind(on_press=self.go_back)  # type: ignore
-        self.clear_btn.bind(on_press=self.clear_leaderboard)  # type: ignore
 
-        self.layout.add_widget(self.wrap_centered(self.title_label))
-        self.layout.add_widget(self.wrap_centered(self.records_label))
-        self.layout.add_widget(self.wrap_centered(self.back_btn))
-        self.layout.add_widget(self.wrap_centered(self.clear_btn))
-        self.add_widget(self.layout)
+class LeaderboardScreen(Screen):
+    def on_pre_enter(self):
+        self._render()
 
-    def on_pre_enter(self, *args):
-        self.update_leaderboard()
+    def _render(self):
+        self.clear_widgets()
 
-    def update_leaderboard(self):
-        players = self.manager.players_data
-        top_players = sorted(players.values(), key=lambda p: p.score, reverse=True)[:4]
-        table_lines = []
-        for idx, p in enumerate(top_players, 1):
-            line = (
-                f"{idx}. {p.name}: {p.score} очков | {p.won} побед | {p.lost} поражений"
+        root = BoxLayout(orientation="vertical", padding=12, spacing=8)
+
+        # Заголовок таблицы
+        header = GridLayout(cols=4, size_hint_y=None, height=32, spacing=4)
+        header.add_widget(Label(text="[b]Name[/b]", markup=True))
+        header.add_widget(Label(text="[b]Score[/b]", markup=True))
+        header.add_widget(Label(text="[b]Wins[/b]", markup=True))
+        header.add_widget(Label(text="[b]Losses[/b]", markup=True))
+        root.add_widget(header)
+
+        players = load_players_sorted()
+
+        if not players:
+            root.add_widget(
+                Label(
+                    text="No records yet — play a round!", size_hint_y=None, height=28
+                )
             )
-            table_lines.append(line)
-        self.records_label.text = (
-            "\n".join(table_lines) if table_lines else "Нет данных."
-        )
+        else:
+            scroll = ScrollView(size_hint=(1, 1))
+            table = GridLayout(
+                cols=4,
+                size_hint_y=None,
+                row_default_height=28,
+                spacing=4,
+                padding=[0, 0, 10, 0],
+            )
+            table.bind(minimum_height=table.setter("height"))
 
-    def clear_leaderboard(self, instance):
-        self.manager.players_data.clear()
-        save_players(self.manager.players_data)
-        self.update_leaderboard()
+            for p in players:
+                table.add_widget(Label(text=str(p.get("name", ""))))
+                table.add_widget(Label(text=str(p.get("score", 0))))
+                table.add_widget(Label(text=str(p.get("wins", 0))))
+                table.add_widget(Label(text=str(p.get("losses", 0))))
 
-    def go_back(self, instance):
+            scroll.add_widget(table)
+            root.add_widget(scroll)
+
+        # Кнопки управления
+        btns = BoxLayout(size_hint_y=None, height=44, spacing=8)
+        back_btn = Button(text="Back")
+        clear_btn = Button(text="Clear Leaderboard")
+        back_btn.bind(on_release=lambda *_: self._back())
+        clear_btn.bind(on_release=lambda *_: self._clear())
+        btns.add_widget(back_btn)
+        btns.add_widget(clear_btn)
+        root.add_widget(btns)
+
+        self.add_widget(root)
+
+    def _back(self):
+        SOUNDS.play("click")
         self.manager.current = "menu"
+
+    def _clear(self):
+        SOUNDS.play("click")
+        save_json(PLAYERS_PATH, {})  # очистили файл
+        self._render()  # перерисовали экран

@@ -1,18 +1,35 @@
 from kivy.core.audio import SoundLoader
+from .utils.assets import get_asset_path
+from .utils import prefs
 
 
 class SoundManager:
     def __init__(self):
-        self.sounds = {
-            "click": SoundLoader.load("assets/sounds/click.wav"),
-            "win": SoundLoader.load("assets/sounds/win.wav"),
-            "lose": SoundLoader.load("assets/sounds/lose.wav"),
-        }
+        self._cache = {}
 
-    def play(self, name):
-        sound = self.sounds.get(name)
-        if sound:
-            sound.stop()  # перезапуск
-            sound.play()
-        else:
-            print(f"Звук '{name}' не найден.")
+    def load(self, name: str, rel_path: str):
+        snd = None
+        try:
+            path = get_asset_path(rel_path)
+            snd = SoundLoader.load(path)
+        except Exception:
+            snd = None
+        self._cache[name] = snd
+
+    def play(self, name: str):
+        if not prefs.get_sfx_enabled():
+            return
+        snd = self._cache.get(name)
+        try:
+            if snd:
+                snd.stop()
+                snd.volume = 1.0
+                snd.play()
+        except Exception:
+            pass
+
+
+SOUNDS = SoundManager()
+SOUNDS.load("click", "assets/sounds/click.wav")
+SOUNDS.load("win", "assets/sounds/win.wav")
+SOUNDS.load("lose", "assets/sounds/lose.wav")
