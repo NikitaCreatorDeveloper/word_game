@@ -32,3 +32,11 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Game data
+word_game_kivy/data/*.json
+
+# Kivy Cache
+*.kv~
+*.pyc
+__pycache__/
