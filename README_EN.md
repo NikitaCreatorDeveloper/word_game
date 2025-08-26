@@ -75,6 +75,10 @@ pytest --cov=word_game_kivy --cov-report=term-missing
 
 ---
 
+## Build Status
+![CI](https://github.com/NikitaCreatorDeveloper/word_game/actions/workflows/ci.yml/badge.svg)
+
+
 ## 🗺 Roadmap
 - [x] Profile system
 - [x] Leaderboard
