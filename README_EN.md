@@ -4,6 +4,24 @@
 A mini-game built with Kivy: guess the word within limited attempts.  
 The project has been polished: full settings, animations, sounds, word sets by categories, and dev infrastructure.
 
+![CI](https://github.com/NikitaCreatorDeveloper/word_game/actions/workflows/ci.yml/badge.svg)
+![Python](https://img.shields.io/badge/python-3.11-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Code style](https://img.shields.io/badge/code%20style-black-black)
+![Lint: ruff](https://img.shields.io/badge/lint-ruff-%23cc0000)
+![Type check: mypy](https://img.shields.io/badge/type--check-mypy-blueviolet)
+![Tests: pytest](https://img.shields.io/badge/tests-pytest-yellow)
+
+---
+
+## 📑 Table of Contents
+- [✨ Features](#-features)
+- [📸 Screenshots & Demo](#-screenshots--demo)
+- [🚀 Installation & Run](#-installation--run)
+- [🧪 Tests & Development](#-tests--development)
+- [🗺 Roadmap](#-roadmap)
+- [📜 License](#-license)
+
 ---
 
 ## ✨ Features
@@ -74,10 +92,6 @@ pytest --cov=word_game_kivy --cov-report=term-missing
 - Code coverage available via `pytest --cov`
 
 ---
-
-## Build Status
-![CI](https://github.com/NikitaCreatorDeveloper/word_game/actions/workflows/ci.yml/badge.svg)
-
 
 ## 🗺 Roadmap
 - [x] Profile system

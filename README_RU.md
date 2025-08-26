@@ -3,6 +3,14 @@
 Мини-игра на Kivy: угадай слово за ограниченное число попыток.  
 Проект доведён до уровня: полноценные настройки, анимации, звуки, словари по категориям и dev-инфра.
 
+![CI](https://github.com/NikitaCreatorDeveloper/word_game/actions/workflows/ci.yml/badge.svg)
+![Python](https://img.shields.io/badge/python-3.11-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Code style](https://img.shields.io/badge/code%20style-black-black)
+![Lint: ruff](https://img.shields.io/badge/lint-ruff-%23cc0000)
+![Type check: mypy](https://img.shields.io/badge/type--check-mypy-blueviolet)
+![Tests: pytest](https://img.shields.io/badge/tests-pytest-yellow)
+
 ---
 
 ## ✨ Возможности
@@ -73,9 +81,6 @@ pytest --cov=word_game_kivy --cov-report=term-missing
 - Покрытие кода доступно через `pytest --cov`
 
 ---
-
-## Статус сборки
-![CI](https://github.com/NikitaCreatorDeveloper/word_game/actions/workflows/ci.yml/badge.svg)
 
 
 ## 🗺 Roadmap
