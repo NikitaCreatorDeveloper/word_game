@@ -6,6 +6,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
 from kivy.uix.scrollview import ScrollView
+from kivy.clock import Clock
 from ..i18n import t
 from ..utils import prefs
 from ..utils.storage import DATA_DIR, load_json, save_json
@@ -27,11 +28,8 @@ def set_player_name(name: str) -> None:
 
 class MenuScreen(Screen):
     def on_pre_enter(self):
-        # Ensure player name exists
-        if not get_player_name():
-            self.open_name_popup()
-
         self.clear_widgets()
+
         root = BoxLayout(orientation="vertical", padding=16, spacing=12)
         title = Label(text=t("title"), font_size="24sp", size_hint_y=None, height=48)
         btn_play = Button(
@@ -65,6 +63,11 @@ class MenuScreen(Screen):
 
         root.add_widget(btn_settings)
         self.add_widget(root)
+
+    def on_enter(self):
+        # показываем окно уже после входа экрана
+        if not get_player_name():
+            Clock.schedule_once(lambda dt: self.open_name_popup(), 0)
 
     def start_game(self):
         SOUNDS.play("click")
@@ -114,6 +117,8 @@ class MenuScreen(Screen):
 
         ok_btn.bind(on_release=_save_and_close)
         popup.open()
+
+        Clock.schedule_once(lambda dt: setattr(ti, "focus", True), 0)
 
     def open_settings_popup(self):
         # === ROOT: vertical scrolling container + footer ===
